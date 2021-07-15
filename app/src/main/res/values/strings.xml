@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">emailBolts</string>
+    <string name="emailEditText">E-mail</string>
+    <string name="passwordEditText">Password</string>
+    <string name="loginButton">Login</string>
+    <string name="errorMessageErrorFromServer">Error: error string from the server</string>
+    <string name="errorMessageEmptyField">Error: error empty field</string>
+    <string name="emailTextView">E-mail:</string>
+    <string name="firstNameTextView">First Name:</string>
+    <string name="lastNameTextView">Last Name:</string>
+    <string name="birthDateTextView">Birth date:</string>
+    <string name="notesTextView">Notes:</string>
+    <string name="logoutButton">Logout</string>
+    <string name="simpleDateFormat">"yyyy.MM.dd 'at' HH:mm:ss"</string>
 </resources>
