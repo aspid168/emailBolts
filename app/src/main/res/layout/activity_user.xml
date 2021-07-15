@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UserActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/userLayoutMargins"
+        android:text="@string/emailTextView"
+        android:textSize="@dimen/textSizeTextView"
+        app:layout_constraintBottom_toTopOf="@id/firstName"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/firstName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/userLayoutMargins"
+        android:text="@string/firstNameTextView"
+        android:textSize="@dimen/textSizeTextView"
+        app:layout_constraintBottom_toTopOf="@id/lastName"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/email" />
+
+    <TextView
+        android:id="@+id/lastName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/userLayoutMargins"
+        android:text="@string/lastNameTextView"
+        android:textSize="@dimen/textSizeTextView"
+        app:layout_constraintBottom_toTopOf="@id/birthDate"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/firstName" />
+
+    <TextView
+        android:id="@+id/birthDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/userLayoutMargins"
+        android:text="@string/birthDateTextView"
+        android:textSize="@dimen/textSizeTextView"
+        app:layout_constraintBottom_toTopOf="@id/notes"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lastName" />
+
+    <TextView
+        android:id="@+id/notes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/userLayoutMargins"
+        android:text="@string/notesTextView"
+        android:textSize="@dimen/textSizeTextView"
+        app:layout_constraintBottom_toTopOf="@id/notesDetailsScrollView"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/birthDate" />
+
+    <TextView
+        android:id="@+id/emailDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/userLayoutMargins"
+        android:textSize="@dimen/textSizeTextView"
+        app:layout_constraintBottom_toTopOf="@id/firstName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/firstNameDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/userLayoutMargins"
+        android:textSize="@dimen/textSizeTextView"
+        app:layout_constraintBottom_toTopOf="@id/lastName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/email" />
+
+    <TextView
+        android:id="@+id/lastNameDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/userLayoutMargins"
+        android:textSize="@dimen/textSizeTextView"
+        app:layout_constraintBottom_toTopOf="@id/birthDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/firstName" />
+
+    <TextView
+        android:id="@+id/birthDateDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/userLayoutMargins"
+        android:textSize="@dimen/textSizeTextView"
+        app:layout_constraintBottom_toTopOf="@id/notes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/lastName" />
+
+    <ScrollView
+        android:id="@+id/notesDetailsScrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/userLayoutMargins"
+        android:fillViewport="true"
+        android:layout_marginVertical="@dimen/mainLayoutDimens"
+        app:layout_constraintBottom_toTopOf="@id/logout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notes">
+
+        <TextView
+            android:id="@+id/notesDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/textSizeTextView" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/userLayoutMargins"
+        android:text="@string/logoutButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notesDetailsScrollView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
