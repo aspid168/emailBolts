@@ -1,79 +1,66 @@
 package ru.study.emailbolts
 
-import android.content.Context
-import android.os.Parcel
-import android.os.Parcelable
-import androidx.core.content.edit
 import bolts.Task
 import com.google.gson.Gson
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.io.Serializable
 
-private const val METHOD_LOGIN = "login"
-private const val METHOD_PROFILE = "profile"
-private const val METHOD = "method"
-private const val STATUS = "status"
-private const val TOKEN = "token"
-private const val EMAIL = "email"
-private const val PASSWORD = "password"
-private const val OK_STATUS = "ok"
-private const val SHARED_PREFERENCES = "SHARED_PREFERENCES"
-private const val DATA_JSON = "DATA_JSON"
 
-private val gson = Gson()
-private val client = OkHttpClient()
 
-class LoginTask() : Parcelable {
+class LoginTask : Serializable {
+    companion object {
+        private const val METHOD_LOGIN = "login"
+        private const val METHOD_PROFILE = "profile"
+        private const val METHOD = "method"
+        private const val STATUS = "status"
+        private const val TOKEN = "token"
+        private const val EMAIL = "email"
+        private const val PASSWORD = "password"
+        private const val OK_STATUS = "ok"
 
-    var isRunning = false
-    private var activity: MainActivity? = null
+        private val gson = Gson()
+        private val client = OkHttpClient()
 
-    constructor(parcel: Parcel) : this() {
-
+        var isRunning = false
     }
 
-    fun unlink() {
-        activity = null
-    }
+    private var listener: Handler? = null
 
-    fun link(act: MainActivity?) {
-        activity = act
+    fun addListener(handler: Handler) {
+        listener = handler
     }
 
     fun executeTask(email: String, password: String): Task<Void> {
         return Task.callInBackground {
             isRunning = true
-            Thread.sleep(3000)
-
+//            Thread.sleep(3000)
             val loginRequestBody =
                 createJsonToGetToken(email, password)
             val request = createRequest(METHOD_LOGIN, loginRequestBody.toRequestBody())
-            val result = getResult(request)
-
-            val token: String?
+            getResult(request)
+        }.onSuccess {
             var userData: String? = null
-            if (result != null && JSONObject(result).get(STATUS).equals(OK_STATUS)) {
-                token = JSONObject(result).get("token").toString()
-                val profileRequestBody = createJsonToGetProfileInfo(token).toRequestBody()
-                val req = createRequest(METHOD_PROFILE, profileRequestBody)
-                userData = getResult(req)
-            }
-            gson.fromJson(userData, UserInfo::class.java)
-        }.onSuccess { task ->
-            Task.UI_THREAD_EXECUTOR.execute {
-                activity?.let {
-                it.progressDialog.dismiss()
-                task.result?.let { result ->
-                    result.email = email
-                    addToSharedPreferences(gson.toJson(result))
-                    UserActivity.startActivity(it)
-                    } ?: run {
-                        it.error.text =
-                            it.resources?.getString(R.string.errorMessageErrorFromServer)
-                    }
+            it.result?.let { result ->
+                if (JSONObject(result).get(STATUS).equals(OK_STATUS)) {
+                    val token = JSONObject(result).get(TOKEN).toString()
+                    val profileRequestBody = createJsonToGetProfileInfo(token).toRequestBody()
+                    val req = createRequest(METHOD_PROFILE, profileRequestBody)
+                    userData = getResult(req)
                 }
+            }
+            userData
+        }.onSuccess {
+            gson.fromJson(it.result, UserInfo::class.java)
+        }.continueWith { task ->
+            val userInfo = task.result
+            if (userInfo != null) {
+                userInfo.email = email
+                listener?.onSuccess(gson.toJson(userInfo))
+            } else {
+                listener?.onError()
             }
             isRunning = false
             null
@@ -110,30 +97,5 @@ class LoginTask() : Parcelable {
             }
         }
         return result
-    }
-
-    private fun addToSharedPreferences(resultJson: String) {
-        activity?.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)?.edit {
-            putString(DATA_JSON, resultJson)
-            commit()
-        }
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<LoginTask> {
-        override fun createFromParcel(parcel: Parcel): LoginTask {
-            return LoginTask(parcel)
-        }
-
-        override fun newArray(size: Int): Array<LoginTask?> {
-            return arrayOfNulls(size)
-        }
     }
 }

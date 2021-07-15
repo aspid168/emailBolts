@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.edit
 import com.google.gson.Gson
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
@@ -28,12 +27,14 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
-    lateinit var emailDetails: TextView
-    lateinit var firstNameDetails: TextView
-    lateinit var lastNameDetails: TextView
-    lateinit var birthDateDetails: TextView
-    lateinit var notesDetails: TextView
-    lateinit var logout: Button
+    private lateinit var emailDetails: TextView
+    private lateinit var firstNameDetails: TextView
+    private lateinit var lastNameDetails: TextView
+    private lateinit var birthDateDetails: TextView
+    private lateinit var notesDetails: TextView
+    private lateinit var logout: Button
+    private lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
@@ -44,7 +45,7 @@ class UserActivity : AppCompatActivity() {
         notesDetails = findViewById(R.id.notesDetails)
         logout = findViewById(R.id.logout)
 
-        val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
         sharedPreferences.getString(
             DATA_JSON, null)?.let {
@@ -58,11 +59,16 @@ class UserActivity : AppCompatActivity() {
         }
 
         logout.setOnClickListener {
-            sharedPreferences.edit {
-                clear()
-                commit()
-            }
+            onExit()
             MainActivity.startActivity(this)
+            finish()
+        }
+    }
+
+    private fun onExit() {
+        sharedPreferences.edit {
+            clear()
+            apply()
         }
     }
 

@@ -13,11 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EmailBolts">
         <activity android:name=".UserActivity"
-            android:launchMode="singleInstance"/>
-        <activity android:name=".MainActivity"
-            android:launchMode="singleTask"
             />
-        <activity android:name=".PreLoader">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
