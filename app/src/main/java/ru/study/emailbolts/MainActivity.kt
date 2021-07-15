@@ -9,11 +9,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.edit
-import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity() {
     companion object {
         private const val ERROR_EXTRA = "ERROR_EXTRA"
+        private const val LOGIN_TASK_EXTRA = "LOGIN_TASK_EXTRA"
         private const val SHARED_PREFERENCES = "SHARED_PREFERENCES"
         private const val DATA_JSON = "DATA_JSON"
 
@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var progressDialog: ProgressDialog
 
     private var loginTask: LoginTask? = null
-    private val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,38 +56,30 @@ class MainActivity : AppCompatActivity() {
             setTitle("Wait")
         }
 
-        savedInstanceState?.getString(ERROR_EXTRA)?.let {
-            error.text = it
+        if (savedInstanceState != null) {
+            savedInstanceState.getSerializable(LOGIN_TASK_EXTRA)?.let {
+                loginTask = it as LoginTask
+                if (loginTask?.isRunning == true) {
+                    progressDialog.show()
+                    addListener()
+                }
+            }
+            savedInstanceState.getString(ERROR_EXTRA)?.let {
+                error.text = it
+            }
+        } else {
+            loginTask = LoginTask()
         }
 
-        loginTask = LoginTask()
-
-        if (LoginTask.isRunning) {
-            progressDialog.show()
-        }
-
-//        login.setText("john@domain.tld")
-//        password.setText("123123")
+        login.setText("john@domain.tld")
+        password.setText("123123")
 
         loginButton.setOnClickListener {
             val loginText = login.text.toString()
             val passwordText = password.text.toString()
             if (hasEmptyFields(loginText, passwordText)) {
                 progressDialog.show()
-                loginTask?.addListener(object : Handler {
-                    override fun onSuccess(userInfo: String) {
-                        addToSharedPreferences(userInfo)
-                        progressDialog.dismiss()
-                        UserActivity.startActivity(this@MainActivity)
-                        finish()
-                    }
-
-                    override fun onError() {
-                        error.text =
-                            it.resources?.getString(R.string.errorMessageErrorFromServer)
-                        progressDialog.dismiss()
-                    }
-                })
+                addListener()
                 loginTask?.executeTask(loginText, passwordText)
             } else {
                 error.text = resources.getString(R.string.errorMessageEmptyField)
@@ -98,6 +89,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun hasEmptyFields(login: String, password: String): Boolean =
         login.isNotEmpty() && password.isNotEmpty()
+
+    private fun addListener() {
+        loginTask?.addListener(object : Handler {
+            override fun onSuccess(userInfo: String) {
+                addToSharedPreferences(userInfo)
+                progressDialog.dismiss()
+                UserActivity.startActivity(this@MainActivity)
+                finish()
+            }
+            override fun onError() {
+                progressDialog.dismiss()
+                error.text = resources.getString(R.string.errorMessageErrorFromServer)
+            }
+        })
+    }
+
 
     private fun addToSharedPreferences(resultJson: String) {
         getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)?.edit {
@@ -114,6 +121,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(ERROR_EXTRA, error.text.toString())
+        outState.putSerializable(LOGIN_TASK_EXTRA, loginTask)
     }
 }
 

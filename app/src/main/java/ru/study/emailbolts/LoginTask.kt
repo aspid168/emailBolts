@@ -11,7 +11,7 @@ import java.io.Serializable
 
 
 class LoginTask : Serializable {
-    companion object {
+    companion object: Serializable {
         private const val METHOD_LOGIN = "login"
         private const val METHOD_PROFILE = "profile"
         private const val METHOD = "method"
@@ -21,12 +21,10 @@ class LoginTask : Serializable {
         private const val PASSWORD = "password"
         private const val OK_STATUS = "ok"
 
-        private val gson = Gson()
-        private val client = OkHttpClient()
-
-        var isRunning = false
     }
 
+
+    var isRunning = false
     private var listener: Handler? = null
 
     fun addListener(handler: Handler) {
@@ -34,9 +32,12 @@ class LoginTask : Serializable {
     }
 
     fun executeTask(email: String, password: String): Task<Void> {
+        val gson = Gson()
         return Task.callInBackground {
             isRunning = true
-//            Thread.sleep(3000)
+
+            Thread.sleep(3000)
+
             val loginRequestBody =
                 createJsonToGetToken(email, password)
             val request = createRequest(METHOD_LOGIN, loginRequestBody.toRequestBody())
@@ -54,7 +55,7 @@ class LoginTask : Serializable {
             userData
         }.onSuccess {
             gson.fromJson(it.result, UserInfo::class.java)
-        }.continueWith { task ->
+        }.continueWith({ task ->
             val userInfo = task.result
             if (userInfo != null) {
                 userInfo.email = email
@@ -64,7 +65,7 @@ class LoginTask : Serializable {
             }
             isRunning = false
             null
-        }
+        }, Task.UI_THREAD_EXECUTOR)
     }
 
     private fun createRequest(method: String, requestBody: RequestBody): Request {
@@ -90,6 +91,7 @@ class LoginTask : Serializable {
         .toString()
 
     private fun getResult(request: Request): String? {
+        val client = OkHttpClient()
         var result: String? = null
         client.newCall(request).execute().use {
             if (it.isSuccessful) {
