@@ -105,7 +105,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-
     private fun addToSharedPreferences(resultJson: String) {
         getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)?.edit {
             putString(DATA_JSON, resultJson)
@@ -123,9 +122,4 @@ class MainActivity : AppCompatActivity() {
         outState.putString(ERROR_EXTRA, error.text.toString())
         outState.putSerializable(LOGIN_TASK_EXTRA, loginTask)
     }
-}
-
-interface Handler {
-    fun onSuccess(userInfo: String)
-    fun onError()
 }
